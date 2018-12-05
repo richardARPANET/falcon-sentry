@@ -9,8 +9,8 @@ import sentry_sdk
 logger = logging.getLogger(__name__)
 
 
-def _create_error_handler(*, dsn=None, error_response_body=None):
-    sentry_sdk.init(dsn)
+def _create_error_handler(*, dsn=None, error_response_body=None, **extra):
+    sentry_sdk.init(dsn, **extra)
 
     def _get_error_response_body(error_reference):
         return error_response_body or (
@@ -35,7 +35,7 @@ def _create_error_handler(*, dsn=None, error_response_body=None):
     return internal_error_handler
 
 
-def falcon_sentry(app, dsn=None, error_response_body=None):
+def falcon_sentry(app, dsn=None, error_response_body=None, **extra):
     # SENTRY_DSN env var, or arg
     try:
         dsn = dsn or os.environ['SENTRY_DSN']
@@ -47,6 +47,8 @@ def falcon_sentry(app, dsn=None, error_response_body=None):
         return app
     app.add_error_handler(
         Exception,
-        _create_error_handler(dsn=dsn, error_response_body=error_response_body)
+        _create_error_handler(
+            dsn=dsn, error_response_body=error_response_body, **extra
+        )
     )
     return app

@@ -34,27 +34,33 @@ class ServerErrorResource:
 
 
 @pytest.fixture
-def app_with_dsn_passed_in():
+def app():
     application = falcon.API()
     application.add_route('/hello-world', HappyResource())
     application.add_route('/unhappy', UnhappyResource())
     application.add_route('/400', BadRequestResource())
     application.add_route('/500', ServerErrorResource())
-    application = falcon_sentry(dsn=DSN, app=application)
     return application
 
 
 @pytest.fixture
-def app_without_dsn_with_env_var(monkeypatch):
-    application = falcon.API()
-    application.add_route('/hello-world', HappyResource())
-    application.add_route('/unhappy', UnhappyResource())
-    application.add_route('/400', BadRequestResource())
-    application.add_route('/500', ServerErrorResource())
+def app_with_dsn_passed_in(app):
+    application = falcon_sentry(dsn=DSN, app=app)
+    return application
+
+
+@pytest.fixture
+def app_with_environment(app):
+    application = falcon_sentry(dsn=DSN, app=app, environment='production')
+    return application
+
+
+@pytest.fixture
+def app_without_dsn_with_env_var(monkeypatch, app):
     monkeypatch.setenv('SENTRY_DSN', DSN)
     # DSN not passed in to ``falcon_sentry`` so it should default
     # to using ENV VAR.
-    application = falcon_sentry(app=application)
+    application = falcon_sentry(app=app)
     return application
 
 
@@ -121,6 +127,18 @@ def test_get_endpoint_which_500_errors(app_fixture, request, mock_sentry_sdk):
     assert result.status == falcon.HTTP_500
     assert result.content == b'{"title": "500 Internal Server Error"}'
     mock_sentry_sdk.init.assert_called_once_with(DSN)
+    assert mock_sentry_sdk.capture_exception.called
+
+
+def test_if_environment_given_is_passed_to_sentry_init(
+    mock_sentry_sdk, app_with_environment
+):
+    result = simulate_get(app_with_environment, '/500')
+
+    # Falcon 500 errors are delivered to sentry
+    assert result.status == falcon.HTTP_500
+    assert result.content == b'{"title": "500 Internal Server Error"}'
+    mock_sentry_sdk.init.assert_called_once_with(DSN, environment='production')
     assert mock_sentry_sdk.capture_exception.called
 
 

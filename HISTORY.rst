@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-0.2.1 (unreleased)
+0.2.1 (2018-12-05)
 ++++++++++++++++++
 
 - Fixes packaging missing wheel.

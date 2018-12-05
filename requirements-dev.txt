@@ -1,0 +1,12 @@
+-r requirements.txt
+pytest==4.0.0
+flake8==3.6.0
+pep8-naming==0.7.0
+mccabe==0.6.1
+pytest-watch==4.2.0
+rope==0.11.0
+yapf==0.24.0
+pytest-mock==1.10.0
+flake8-import-order==0.18
+ipdb==0.11
+zest.releaser==6.15.3

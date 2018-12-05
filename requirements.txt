@@ -1,2 +1,3 @@
 falcon
 sentry-sdk
+wheel

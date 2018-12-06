@@ -6,7 +6,7 @@ Release History
 0.2.2 (unreleased)
 ++++++++++++++++++
 
-- Nothing changed yet.
+- Adds logging.
 
 
 0.2.1 (2018-12-05)

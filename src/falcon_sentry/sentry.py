@@ -51,4 +51,5 @@ def falcon_sentry(app, dsn=None, error_response_body=None, **extra):
             dsn=dsn, error_response_body=error_response_body, **extra
         )
     )
+    logger.info('falcon-sentry initialised')
     return app

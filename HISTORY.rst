@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-0.2.2 (unreleased)
+0.2.2 (2018-12-06)
 ++++++++++++++++++
 
 - Adds logging.
